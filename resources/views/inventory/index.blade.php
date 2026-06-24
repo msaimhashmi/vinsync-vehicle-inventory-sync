@@ -377,6 +377,13 @@
             {{-- ════════════════════════════════════
                  VEHICLE LISTING
             ════════════════════════════════════ --}}
+            @php
+                /* Set $quickView = true to enable the Quick View modal feature */
+                $quickView = true;
+
+                /* Strip HTML tags + decode entities from API data fields */
+                $ct = fn($s) => $s ? html_entity_decode(strip_tags((string)$s), ENT_QUOTES | ENT_HTML5, 'UTF-8') : null;
+            @endphp
             @if($vehicles->isEmpty())
 
                 <div class="empty-state">
@@ -393,6 +400,37 @@
                 {{-- ───── LIST VIEW ───── --}}
                 <div class="vehicles-list">
                     @foreach($vehicles as $vehicle)
+                    @if($quickView)
+                    @php
+                        $vData = [
+                            'title'          => $vehicle->year.' '.$vehicle->make.' '.$vehicle->model.($vehicle->trim ? ' — '.$vehicle->trim : ''),
+                            'condition'      => $vehicle->condition,
+                            'price'          => $vehicle->display_price ? '$'.number_format($vehicle->display_price) : null,
+                            'vin'            => $vehicle->vin,
+                            'stock_number'   => $vehicle->stock_number,
+                            'year'           => $vehicle->year,
+                            'make'           => $vehicle->make,
+                            'model'          => $vehicle->model,
+                            'trim'           => $vehicle->trim,
+                            'body_style'     => $vehicle->body_style,
+                            'mileage'        => $vehicle->mileage !== null ? number_format($vehicle->mileage).' mi' : null,
+                            'engine'         => $ct($vehicle->engine),
+                            'transmission'   => $ct($vehicle->transmission),
+                            'drivetrain'     => $vehicle->drivetrain,
+                            'fuel_type'      => $vehicle->fuel_type,
+                            'mpg'            => $vehicle->mpg_city ? $vehicle->mpg_city.'/'.$vehicle->mpg_hwy.' MPG' : null,
+                            'exterior_color' => $vehicle->exterior_color,
+                            'interior_color' => $vehicle->interior_color,
+                            'dealer_name'    => $vehicle->dealer_name,
+                            'dealer_city'    => $vehicle->dealer_city,
+                            'dealer_state'   => $vehicle->dealer_state,
+                            'features'       => $vehicle->features ?? [],
+                            'images'         => $vehicle->images ?? [],
+                            'primary_image'  => $vehicle->primary_image,
+                            'detail_url'     => $vehicle->detail_url,
+                        ];
+                    @endphp
+                    @endif
                         <div class="v-row">
 
                             {{-- Thumbnail --}}
@@ -403,6 +441,11 @@
                                 <span class="cond-pill {{ $vehicle->condition === 'used' ? 'used' : '' }}">
                                     {{ strtoupper($vehicle->condition) }}
                                 </span>
+                                @if($quickView)
+                                <button type="button" class="quick-view-overlay" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                    <i class="bi bi-eye-fill"></i> Quick View
+                                </button>
+                                @endif
                             </div>
 
                             {{-- Details --}}
@@ -412,29 +455,42 @@
                                     @if($vehicle->trim) &mdash; {{ $vehicle->trim }} @endif
                                 </div>
                                 <div class="v-meta">
-                                    {{ $vehicle->year }}
                                     @if($vehicle->mileage !== null)
-                                        <span class="bull">{{ number_format($vehicle->mileage) }} miles</span>
+                                        {{ number_format($vehicle->mileage) }} miles
                                     @endif
                                     @if($vehicle->stock_number)
                                         <span class="bull">Stock #{{ $vehicle->stock_number }}</span>
                                     @endif
                                     @if($vehicle->vin)
-                                        <span class="bull">VIN {{ substr($vehicle->vin, 0, 11) }}...</span>
+                                        <span class="bull">VIN {{ $vehicle->vin }}</span>
                                     @endif
                                 </div>
                                 <div class="row-specs">
                                     @if($vehicle->engine)
-                                        <span><i class="bi bi-cpu"></i>{{ $vehicle->engine }}</span>
+                                        <span><i class="bi bi-cpu"></i>{{ $ct($vehicle->engine) }}</span>
                                     @endif
                                     @if($vehicle->transmission)
-                                        <span><i class="bi bi-gear"></i>{{ $vehicle->transmission }}</span>
+                                        <span><i class="bi bi-gear"></i>{{ $ct($vehicle->transmission) }}</span>
+                                    @endif
+                                    @if($vehicle->drivetrain)
+                                        <span><i class="bi bi-arrows-move"></i>{{ $vehicle->drivetrain }}</span>
                                     @endif
                                     @if($vehicle->exterior_color)
                                         <span><i class="bi bi-palette"></i>{{ $vehicle->exterior_color }}</span>
                                     @endif
                                     @if($vehicle->mpg_city)
-                                        <span><i class="bi bi-fuel-pump"></i>{{ $vehicle->mpg_city }}/{{ $vehicle->mpg_hwy }} MPG</span>
+                                        <span><i class="bi bi-speedometer"></i>{{ $vehicle->mpg_city }}/{{ $vehicle->mpg_hwy }} MPG</span>
+                                    @endif
+                                    @if(!$quickView)
+                                        @if($vehicle->fuel_type)
+                                            <span><i class="bi bi-fuel-pump"></i>{{ $vehicle->fuel_type }}</span>
+                                        @endif
+                                        @if($vehicle->interior_color)
+                                            <span><i class="bi bi-palette2"></i>Int: {{ $vehicle->interior_color }}</span>
+                                        @endif
+                                        @if($vehicle->body_style)
+                                            <span><i class="bi bi-car-front"></i>{{ $vehicle->body_style }}</span>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
@@ -450,9 +506,17 @@
                                 </div>
                                 <div class="v-price-note">Plus taxes, tags &amp; fees</div>
                                 <div class="row-btns">
-                                    <a href="{{ $vehicle->detail_url ?? '#' }}"
-                                       @if($vehicle->detail_url) target="_blank" rel="noopener" @endif
-                                       class="btn-outline-blue">View Details</a>
+                                    @if($quickView)
+                                    <button type="button" class="btn-outline-blue" style="padding: 6px 12px;" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                        View Details
+                                    </button>
+{{--                                        <button type="button" class="btn-quick-view-sm" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>--}}
+{{--                                            <i class="bi bi-eye"></i> View Details--}}
+{{--                                        </button>--}}
+                                    @endif
+{{--                                    <a href="{{ $vehicle->detail_url ?? '#' }}"--}}
+{{--                                       @if($vehicle->detail_url) target="_blank" rel="noopener" @endif--}}
+{{--                                       class="btn-outline-blue">View Details</a>--}}
                                     <a href="#" class="btn-gradient">Apply Now</a>
                                 </div>
                             </div>
@@ -466,6 +530,37 @@
                 {{-- ───── GRID VIEW (default) ───── --}}
                 <div class="vehicles-grid">
                     @foreach($vehicles as $vehicle)
+                    @if($quickView)
+                    @php
+                        $vData = [
+                            'title'          => $vehicle->year.' '.$vehicle->make.' '.$vehicle->model.($vehicle->trim ? ' — '.$vehicle->trim : ''),
+                            'condition'      => $vehicle->condition,
+                            'price'          => $vehicle->display_price ? '$'.number_format($vehicle->display_price) : null,
+                            'vin'            => $vehicle->vin,
+                            'stock_number'   => $vehicle->stock_number,
+                            'year'           => $vehicle->year,
+                            'make'           => $vehicle->make,
+                            'model'          => $vehicle->model,
+                            'trim'           => $vehicle->trim,
+                            'body_style'     => $vehicle->body_style,
+                            'mileage'        => $vehicle->mileage !== null ? number_format($vehicle->mileage).' mi' : null,
+                            'engine'         => $ct($vehicle->engine),
+                            'transmission'   => $ct($vehicle->transmission),
+                            'drivetrain'     => $vehicle->drivetrain,
+                            'fuel_type'      => $vehicle->fuel_type,
+                            'mpg'            => $vehicle->mpg_city ? $vehicle->mpg_city.'/'.$vehicle->mpg_hwy.' MPG' : null,
+                            'exterior_color' => $vehicle->exterior_color,
+                            'interior_color' => $vehicle->interior_color,
+                            'dealer_name'    => $vehicle->dealer_name,
+                            'dealer_city'    => $vehicle->dealer_city,
+                            'dealer_state'   => $vehicle->dealer_state,
+                            'features'       => $vehicle->features ?? [],
+                            'images'         => $vehicle->images ?? [],
+                            'primary_image'  => $vehicle->primary_image,
+                            'detail_url'     => $vehicle->detail_url,
+                        ];
+                    @endphp
+                    @endif
                         <div class="v-card">
 
                             {{-- Image --}}
@@ -476,23 +571,56 @@
                                 <span class="cond-pill {{ $vehicle->condition === 'used' ? 'used' : '' }}">
                                     {{ strtoupper($vehicle->condition) }}
                                 </span>
+                                @if($quickView)
+                                <button type="button" class="quick-view-overlay" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                    <i class="bi bi-eye-fill"></i> Quick View
+                                </button>
+                                @endif
                             </div>
 
                             {{-- Body --}}
                             <div class="card-body-wrap">
                                 <div class="v-title">
                                     {{ $vehicle->year }} {{ $vehicle->make }} {{ $vehicle->model }}
+                                    @if($vehicle->trim) <span class="v-trim">&mdash; {{ $vehicle->trim }}</span> @endif
                                 </div>
                                 <div class="v-meta">
-                                    {{ $vehicle->year }}
                                     @if($vehicle->mileage !== null)
-                                        <span class="bull">{{ number_format($vehicle->mileage) }} miles</span>
+                                        {{ number_format($vehicle->mileage) }} mi
                                     @endif
                                     @if($vehicle->stock_number)
                                         <span class="bull">Stock #{{ $vehicle->stock_number }}</span>
                                     @endif
-                                    @if($vehicle->vin)
-                                        <br>VIN {{ substr($vehicle->vin, 0, 10) }}...
+                                    @if(!$quickView && $vehicle->vin)
+                                        <span class="bull">VIN {{ $vehicle->vin }}</span>
+                                    @endif
+                                </div>
+                                <div class="card-specs">
+                                    @if($vehicle->engine)
+                                        <span><i class="bi bi-cpu"></i>{{ $ct($vehicle->engine) }}</span>
+                                    @endif
+                                    @if($vehicle->transmission)
+                                        <span><i class="bi bi-gear"></i>{{ $ct($vehicle->transmission) }}</span>
+                                    @endif
+                                    @if($vehicle->drivetrain)
+                                        <span><i class="bi bi-arrows-move"></i>{{ $vehicle->drivetrain }}</span>
+                                    @endif
+                                    @if($vehicle->exterior_color)
+                                        <span><i class="bi bi-palette"></i>{{ $vehicle->exterior_color }}</span>
+                                    @endif
+                                    @if(!$quickView)
+                                        @if($vehicle->fuel_type)
+                                            <span><i class="bi bi-fuel-pump"></i>{{ $vehicle->fuel_type }}</span>
+                                        @endif
+                                        @if($vehicle->mpg_city)
+                                            <span><i class="bi bi-speedometer"></i>{{ $vehicle->mpg_city }}/{{ $vehicle->mpg_hwy }} MPG</span>
+                                        @endif
+                                        @if($vehicle->interior_color)
+                                            <span><i class="bi bi-palette2"></i>Int: {{ $vehicle->interior_color }}</span>
+                                        @endif
+                                        @if($vehicle->body_style)
+                                            <span><i class="bi bi-car-front"></i>{{ $vehicle->body_style }}</span>
+                                        @endif
                                     @endif
                                 </div>
                                 <div class="v-price">
@@ -507,9 +635,14 @@
 
                             {{-- Action Buttons --}}
                             <div class="card-actions">
-                                <a href="{{ $vehicle->detail_url ?? '#' }}"
-                                   @if($vehicle->detail_url) target="_blank" rel="noopener" @endif
-                                   class="btn-outline-blue">View Details</a>
+                                @if($quickView)
+                                <button type="button" class="btn-outline-blue" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                    View Details
+                                </button>
+                                @endif
+{{--                                <a href="{{ $vehicle->detail_url ?? '#' }}"--}}
+{{--                                   @if($vehicle->detail_url) target="_blank" rel="noopener" @endif--}}
+{{--                                   class="btn-outline-blue">View Details</a>--}}
                                 <a href="#" class="btn-gradient">Apply Now</a>
                             </div>
 
@@ -530,6 +663,79 @@
         </div>{{-- /inventory-content --}}
     </div>{{-- /inventory-body --}}
 </div>{{-- /inventory-wrapper --}}
+
+@if($quickView)
+{{-- ══════════════════════════════════════════════
+     IMAGE ZOOM LIGHTBOX
+══════════════════════════════════════════════ --}}
+<div id="qvZoomOverlay">
+    <button id="qvZoomClose" aria-label="Close zoom">&times;</button>
+    <img id="qvZoomImg" src="" alt="">
+</div>
+
+{{-- ══════════════════════════════════════════════
+     QUICK VIEW MODAL
+══════════════════════════════════════════════ --}}
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="qvModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content qv-modal-content">
+
+            <div class="modal-header qv-header">
+                <div class="qv-header-left">
+                    <span class="cond-pill qv-cond-pill" id="qvCondPill"></span>
+                    <h5 class="modal-title qv-title" id="qvModalLabel"></h5>
+                    <div class="qv-price-line">
+                        <span class="qv-price" id="qvPrice"></span>
+                        <span class="qv-price-note">Plus taxes, tags &amp; fees</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close qv-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body qv-body">
+                <div class="qv-layout">
+
+                    {{-- Left: image gallery --}}
+                    <div class="qv-gallery">
+                        <div class="qv-main-img-wrap">
+                            <img id="qvMainImg" src="" alt="" class="qv-main-img">
+                            <button class="qv-gallery-nav qv-prev" id="qvPrev" aria-label="Previous image">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button class="qv-gallery-nav qv-next" id="qvNext" aria-label="Next image">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                            <span class="qv-img-counter" id="qvImgCounter"></span>
+                        </div>
+                        <div class="qv-thumbs" id="qvThumbs"></div>
+                    </div>
+
+                    {{-- Right: specs + features --}}
+                    <div class="qv-details">
+
+                        <div class="qv-section-title">Vehicle Details</div>
+                        <div class="qv-specs-grid" id="qvSpecsGrid"></div>
+
+                        <div class="qv-section-title qv-features-title" id="qvFeaturesTitle" style="display:none">Features &amp; Options</div>
+                        <div class="qv-features-wrap" id="qvFeatures"></div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer qv-footer">
+                <a href="#" class="btn-gradient" id="qvApply" style="padding:10px 22px;font-size:14px;border-radius:6px;">
+                    Apply Now
+                </a>
+{{--                <a href="#" class="btn-outline-blue qv-view-details" id="qvViewDetails" target="_blank" rel="noopener">--}}
+{{--                    View Full Details <i class="bi bi-box-arrow-up-right ms-1" style="font-size:11px;"></i>--}}
+{{--                </a>--}}
+            </div>
+
+        </div>
+    </div>
+</div>
+@endif {{-- $quickView --}}
 
 {{-- ══════════════════════════════════════════════
      FOOTER CTA STRIP
@@ -601,7 +807,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmrAYP3aFrZHaZl5HFnJbZdNg6uFzu4r1pKP"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <script>
     /* ── Mobile nav toggle ── */
@@ -621,10 +827,163 @@
     function handleResize() {
         const sidebar = document.getElementById('filterSidebar');
         if (window.innerWidth >= 992) {
-            sidebar.classList.remove('open'); // class irrelevant on desktop (CSS shows it always)
+            sidebar.classList.remove('open');
         }
     }
     window.addEventListener('resize', handleResize);
+
+    @if($quickView)
+    /* ── Quick View Modal ── */
+    (function () {
+        var bsModal   = null;
+        var images    = [];
+        var curImg    = 0;
+
+        function getEl(id) { return document.getElementById(id); }
+
+        function getModal() {
+            if (!bsModal) bsModal = new bootstrap.Modal(getEl('quickViewModal'));
+            return bsModal;
+        }
+
+        function setImage(idx) {
+            if (!images.length) return;
+            curImg = (idx + images.length) % images.length;
+            var mainImg = getEl('qvMainImg');
+            if (mainImg) mainImg.src = images[curImg];
+            var counter = getEl('qvImgCounter');
+            if (counter) counter.textContent = images.length > 1 ? (curImg + 1) + ' / ' + images.length : '';
+            var thumbs = getEl('qvThumbs');
+            if (thumbs) thumbs.querySelectorAll('.qv-thumb').forEach(function (t, i) {
+                t.classList.toggle('active', i === curImg);
+            });
+        }
+
+        /* ── Zoom lightbox ── */
+        var zoomOverlay = document.getElementById('qvZoomOverlay');
+        var zoomImg     = document.getElementById('qvZoomImg');
+        function openZoom(src) {
+            zoomImg.src = src;
+            zoomOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeZoom() {
+            zoomOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        zoomOverlay.addEventListener('click', closeZoom);
+        document.getElementById('qvZoomClose').addEventListener('click', function(e) { e.stopPropagation(); closeZoom(); });
+        document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeZoom(); });
+
+        /* Clicking the main modal image opens zoom */
+        document.getElementById('qvMainImg').addEventListener('click', function() {
+            if (this.src) openZoom(this.src);
+        });
+
+        document.addEventListener('click', function (e) {
+            /* Gallery prev/next inside modal */
+            if (e.target.closest('#qvPrev')) { e.stopPropagation(); setImage(curImg - 1); return; }
+            if (e.target.closest('#qvNext')) { e.stopPropagation(); setImage(curImg + 1); return; }
+            if (e.target.closest('.qv-thumb')) return;
+
+            var btn = e.target.closest('[data-vehicle]');
+            if (!btn) return;
+
+            var raw = btn.getAttribute('data-vehicle');
+            if (!raw) return;
+
+            var v;
+            try { v = JSON.parse(raw); }
+            catch (err) { console.error('QuickView parse error:', err); return; }
+
+            /* Header */
+            var el;
+            if ((el = getEl('qvModalLabel')))  el.textContent = v.title || '';
+            if ((el = getEl('qvCondPill')))  {
+                el.textContent = v.condition ? v.condition.toUpperCase() : '';
+                el.className   = 'cond-pill qv-cond-pill' + (v.condition === 'used' ? ' used' : '');
+            }
+            if ((el = getEl('qvPrice')))    el.textContent = v.price || 'Call for Price';
+
+            /* Detail link */
+            if ((el = getEl('qvViewDetails'))) {
+                if (v.detail_url) { el.href = v.detail_url; el.style.display = ''; }
+                else              { el.style.display = 'none'; }
+            }
+
+            /* Images */
+            images = (v.images && v.images.length) ? v.images : (v.primary_image ? [v.primary_image] : []);
+            curImg  = 0;
+
+            var prev = getEl('qvPrev'), next = getEl('qvNext');
+            if (prev) prev.style.display = images.length > 1 ? '' : 'none';
+            if (next) next.style.display = images.length > 1 ? '' : 'none';
+
+            var thumbsEl = getEl('qvThumbs');
+            if (thumbsEl) {
+                thumbsEl.innerHTML = '';
+                if (images.length > 1) {
+                    images.forEach(function (src, i) {
+                        var t = document.createElement('img');
+                        t.src = src;
+                        t.className = 'qv-thumb' + (i === 0 ? ' active' : '');
+                        t.setAttribute('data-idx', i);
+                        thumbsEl.appendChild(t);
+                    });
+                    thumbsEl.onclick = function (ev) {
+                        var th = ev.target.closest('.qv-thumb');
+                        if (th) setImage(parseInt(th.getAttribute('data-idx'), 10));
+                    };
+                }
+            }
+            setImage(0);
+
+            /* Specs */
+            var specs = [
+                { icon: 'bi-hash',         label: 'Stock #',      val: v.stock_number },
+                { icon: 'bi-upc',          label: 'VIN',          val: v.vin },
+                { icon: 'bi-calendar3',    label: 'Year',         val: v.year },
+                { icon: 'bi-car-front',    label: 'Make / Model', val: (v.make && v.model) ? v.make + ' ' + v.model : null },
+                { icon: 'bi-tag',          label: 'Trim',         val: v.trim },
+                { icon: 'bi-grid',         label: 'Body Style',   val: v.body_style },
+                { icon: 'bi-speedometer2', label: 'Mileage',      val: v.mileage },
+                { icon: 'bi-cpu',          label: 'Engine',       val: v.engine },
+                { icon: 'bi-gear',         label: 'Transmission', val: v.transmission },
+                { icon: 'bi-arrows-move',  label: 'Drivetrain',   val: v.drivetrain },
+                { icon: 'bi-fuel-pump',    label: 'Fuel Type',    val: v.fuel_type },
+                { icon: 'bi-speedometer',  label: 'MPG City/Hwy', val: v.mpg },
+                { icon: 'bi-palette',      label: 'Ext. Color',   val: v.exterior_color },
+                { icon: 'bi-palette2',     label: 'Int. Color',   val: v.interior_color },
+                { icon: 'bi-building',     label: 'Dealer',       val: v.dealer_name },
+                { icon: 'bi-geo-alt',      label: 'Location',     val: (v.dealer_city && v.dealer_state) ? v.dealer_city + ', ' + v.dealer_state : (v.dealer_city || v.dealer_state || null) },
+            ];
+            var grid = getEl('qvSpecsGrid');
+            if (grid) grid.innerHTML = specs.filter(function (s) { return s.val; }).map(function (s) {
+                return '<div class="qv-spec-item">'
+                     + '<span class="qv-spec-icon"><i class="bi ' + s.icon + '"></i></span>'
+                     + '<div><span class="qv-spec-label">' + s.label + '</span>'
+                     + '<span class="qv-spec-val">' + String(s.val) + '</span></div>'
+                     + '</div>';
+            }).join('');
+
+            /* Features */
+            var feats   = Array.isArray(v.features) ? v.features : [];
+            var featWrap = getEl('qvFeatures');
+            var featHead = getEl('qvFeaturesTitle');
+            if (feats.length) {
+                if (featHead) featHead.style.display = '';
+                if (featWrap) featWrap.innerHTML = feats.map(function (f) {
+                    return '<span class="qv-feat-badge">' + String(f) + '</span>';
+                }).join('');
+            } else {
+                if (featHead) featHead.style.display = 'none';
+                if (featWrap) featWrap.innerHTML = '';
+            }
+
+            getModal().show();
+        });
+    })();
+    @endif {{-- $quickView --}}
 </script>
 </body>
 </html>
