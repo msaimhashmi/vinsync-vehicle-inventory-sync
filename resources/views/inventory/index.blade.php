@@ -31,17 +31,17 @@
         {{-- Collapsible wrapper on mobile --}}
         <div class="nav-collapse-wrapper" id="navCollapse">
             <div class="nav-links" id="navLinks">
-                <a href="#">Home</a>
-                <a href="#">About Us</a>
+                <a href="https://juliotucarguy.com/">Home</a>
+                <a href=" https://juliotucarguy.com/about-us/">About Us</a>
                 <a href="{{ route('inventory.index') }}" class="active">Inventory</a>
-                <a href="#" class="has-caret">Financial Services</a>
-                <a href="#">Contact Us</a>
+                <a href="https://juliotucarguy.com/financial-services/" class="has-caret">Financial Services</a>
+                <a href="https://juliotucarguy.com/contact-us/">Contact Us</a>
             </div>
             <div class="nav-ctas" id="navCtas">
                 <a href="#" class="btn-gradient" style="font-size:12px;padding:7px 16px;line-height:1.3;border-radius:6px;">
                     Apply<br>Now
                 </a>
-                <a href="#" class="btn-gradient">
+                <a href="https://calendly.com/julio-trucks/click-the-link-below-to-book-your-test-drive" class="btn-gradient">
                     <i class="bi bi-geo-alt-fill"></i>Visit<br>Us
                 </a>
             </div>
@@ -198,30 +198,30 @@
 
                 {{-- Cylinders --}}
                 @if($options['cylinders']->isNotEmpty())
-                <div class="filter-group">
-                    <label>Cylinders</label>
-                    <select name="cylinders" onchange="document.getElementById('filterForm').submit()">
-                        <option value="">Any Cylinders</option>
-                        @foreach($options['cylinders'] as $cyl)
-                            <option value="{{ $cyl }}" {{ request('cylinders') == $cyl ? 'selected' : '' }}>
-                                {{ $cyl }}-Cylinder
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="filter-group">
+                        <label>Cylinders</label>
+                        <select name="cylinders" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">Any Cylinders</option>
+                            @foreach($options['cylinders'] as $cyl)
+                                <option value="{{ $cyl }}" {{ request('cylinders') == $cyl ? 'selected' : '' }}>
+                                    {{ $cyl }}-Cylinder
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 @endif
 
                 {{-- Engine Size --}}
                 @if($options['engine_sizes']->isNotEmpty())
-                <div class="filter-group">
-                    <label>Engine Size</label>
-                    <select name="engine_filter" onchange="document.getElementById('filterForm').submit()">
-                        <option value="">Any Engine Size</option>
-                        @foreach($options['engine_sizes'] as $es)
-                            <option value="{{ $es }}" {{ request('engine_filter') === $es ? 'selected' : '' }}>{{ $es }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="filter-group">
+                        <label>Engine Size</label>
+                        <select name="engine_filter" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">Any Engine Size</option>
+                            @foreach($options['engine_sizes'] as $es)
+                                <option value="{{ $es }}" {{ request('engine_filter') === $es ? 'selected' : '' }}>{{ $es }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 @endif
 
                 {{-- Transmission --}}
@@ -237,15 +237,15 @@
 
                 {{-- Features --}}
                 @if($options['features_list']->isNotEmpty())
-                <div class="filter-group">
-                    <label>Features</label>
-                    <select name="feature" onchange="document.getElementById('filterForm').submit()">
-                        <option value="">Any Feature</option>
-                        @foreach($options['features_list'] as $feat)
-                            <option value="{{ $feat }}" {{ request('feature') === $feat ? 'selected' : '' }}>{{ $feat }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div class="filter-group">
+                        <label>Features</label>
+                        <select name="feature" onchange="document.getElementById('filterForm').submit()">
+                            <option value="">Any Feature</option>
+                            @foreach($options['features_list'] as $feat)
+                                <option value="{{ $feat }}" {{ request('feature') === $feat ? 'selected' : '' }}>{{ $feat }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 @endif
 
                 {{-- Fuel Type --}}
@@ -400,37 +400,37 @@
                 {{-- ───── LIST VIEW ───── --}}
                 <div class="vehicles-list">
                     @foreach($vehicles as $vehicle)
-                    @if($quickView)
-                    @php
-                        $vData = [
-                            'title'          => $vehicle->year.' '.$vehicle->make.' '.$vehicle->model.($vehicle->trim ? ' — '.$vehicle->trim : ''),
-                            'condition'      => $vehicle->condition,
-                            'price'          => $vehicle->display_price ? '$'.number_format($vehicle->display_price) : null,
-                            'vin'            => $vehicle->vin,
-                            'stock_number'   => $vehicle->stock_number,
-                            'year'           => $vehicle->year,
-                            'make'           => $vehicle->make,
-                            'model'          => $vehicle->model,
-                            'trim'           => $vehicle->trim,
-                            'body_style'     => $vehicle->body_style,
-                            'mileage'        => $vehicle->mileage !== null ? number_format($vehicle->mileage).' mi' : null,
-                            'engine'         => $ct($vehicle->engine),
-                            'transmission'   => $ct($vehicle->transmission),
-                            'drivetrain'     => $vehicle->drivetrain,
-                            'fuel_type'      => $vehicle->fuel_type,
-                            'mpg'            => $vehicle->mpg_city ? $vehicle->mpg_city.'/'.$vehicle->mpg_hwy.' MPG' : null,
-                            'exterior_color' => $vehicle->exterior_color,
-                            'interior_color' => $vehicle->interior_color,
-                            'dealer_name'    => $vehicle->dealer_name,
-                            'dealer_city'    => $vehicle->dealer_city,
-                            'dealer_state'   => $vehicle->dealer_state,
-                            'features'       => $vehicle->features ?? [],
-                            'images'         => $vehicle->images ?? [],
-                            'primary_image'  => $vehicle->primary_image,
-                            'detail_url'     => $vehicle->detail_url,
-                        ];
-                    @endphp
-                    @endif
+                        @if($quickView)
+                            @php
+                                $vData = [
+                                    'title'          => $vehicle->year.' '.$vehicle->make.' '.$vehicle->model.($vehicle->trim ? ' — '.$vehicle->trim : ''),
+                                    'condition'      => $vehicle->condition,
+                                    'price'          => $vehicle->display_price ? '$'.number_format($vehicle->display_price) : null,
+                                    'vin'            => $vehicle->vin,
+                                    'stock_number'   => $vehicle->stock_number,
+                                    'year'           => $vehicle->year,
+                                    'make'           => $vehicle->make,
+                                    'model'          => $vehicle->model,
+                                    'trim'           => $vehicle->trim,
+                                    'body_style'     => $vehicle->body_style,
+                                    'mileage'        => $vehicle->mileage !== null ? number_format($vehicle->mileage).' mi' : null,
+                                    'engine'         => $ct($vehicle->engine),
+                                    'transmission'   => $ct($vehicle->transmission),
+                                    'drivetrain'     => $vehicle->drivetrain,
+                                    'fuel_type'      => $vehicle->fuel_type,
+                                    'mpg'            => $vehicle->mpg_city ? $vehicle->mpg_city.'/'.$vehicle->mpg_hwy.' MPG' : null,
+                                    'exterior_color' => $vehicle->exterior_color,
+                                    'interior_color' => $vehicle->interior_color,
+                                    'dealer_name'    => $vehicle->dealer_name,
+                                    'dealer_city'    => $vehicle->dealer_city,
+                                    'dealer_state'   => $vehicle->dealer_state,
+                                    'features'       => $vehicle->features ?? [],
+                                    'images'         => $vehicle->images ?? [],
+                                    'primary_image'  => $vehicle->primary_image,
+                                    'detail_url'     => $vehicle->detail_url,
+                                ];
+                            @endphp
+                        @endif
                         <div class="v-row">
 
                             {{-- Thumbnail --}}
@@ -442,9 +442,9 @@
                                     {{ strtoupper($vehicle->condition) }}
                                 </span>
                                 @if($quickView)
-                                <button type="button" class="quick-view-overlay" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
-                                    <i class="bi bi-eye-fill"></i> Quick View
-                                </button>
+                                    <button type="button" class="quick-view-overlay" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                        <i class="bi bi-eye-fill"></i> Quick View
+                                    </button>
                                 @endif
                             </div>
 
@@ -507,17 +507,17 @@
                                 <div class="v-price-note">Plus taxes, tags &amp; fees</div>
                                 <div class="row-btns">
                                     @if($quickView)
-                                    <button type="button" class="btn-outline-blue" style="padding: 6px 12px;" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
-                                        View Details
-                                    </button>
-{{--                                        <button type="button" class="btn-quick-view-sm" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>--}}
-{{--                                            <i class="bi bi-eye"></i> View Details--}}
-{{--                                        </button>--}}
+                                        <button type="button" class="btn-outline-blue" style="padding: 6px 12px;" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                            View Details
+                                        </button>
+                                        {{--                                        <button type="button" class="btn-quick-view-sm" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>--}}
+                                        {{--                                            <i class="bi bi-eye"></i> View Details--}}
+                                        {{--                                        </button>--}}
                                     @endif
-{{--                                    <a href="{{ $vehicle->detail_url ?? '#' }}"--}}
-{{--                                       @if($vehicle->detail_url) target="_blank" rel="noopener" @endif--}}
-{{--                                       class="btn-outline-blue">View Details</a>--}}
-                                    <a href="#" class="btn-gradient">Apply Now</a>
+                                    {{--                                    <a href="{{ $vehicle->detail_url ?? '#' }}"--}}
+                                    {{--                                       @if($vehicle->detail_url) target="_blank" rel="noopener" @endif--}}
+                                    {{--                                       class="btn-outline-blue">View Details</a>--}}
+                                    <a href="https://juliotucarguy.com/apply-now/" class="btn-gradient">Apply Now</a>
                                 </div>
                             </div>
 
@@ -530,37 +530,37 @@
                 {{-- ───── GRID VIEW (default) ───── --}}
                 <div class="vehicles-grid">
                     @foreach($vehicles as $vehicle)
-                    @if($quickView)
-                    @php
-                        $vData = [
-                            'title'          => $vehicle->year.' '.$vehicle->make.' '.$vehicle->model.($vehicle->trim ? ' — '.$vehicle->trim : ''),
-                            'condition'      => $vehicle->condition,
-                            'price'          => $vehicle->display_price ? '$'.number_format($vehicle->display_price) : null,
-                            'vin'            => $vehicle->vin,
-                            'stock_number'   => $vehicle->stock_number,
-                            'year'           => $vehicle->year,
-                            'make'           => $vehicle->make,
-                            'model'          => $vehicle->model,
-                            'trim'           => $vehicle->trim,
-                            'body_style'     => $vehicle->body_style,
-                            'mileage'        => $vehicle->mileage !== null ? number_format($vehicle->mileage).' mi' : null,
-                            'engine'         => $ct($vehicle->engine),
-                            'transmission'   => $ct($vehicle->transmission),
-                            'drivetrain'     => $vehicle->drivetrain,
-                            'fuel_type'      => $vehicle->fuel_type,
-                            'mpg'            => $vehicle->mpg_city ? $vehicle->mpg_city.'/'.$vehicle->mpg_hwy.' MPG' : null,
-                            'exterior_color' => $vehicle->exterior_color,
-                            'interior_color' => $vehicle->interior_color,
-                            'dealer_name'    => $vehicle->dealer_name,
-                            'dealer_city'    => $vehicle->dealer_city,
-                            'dealer_state'   => $vehicle->dealer_state,
-                            'features'       => $vehicle->features ?? [],
-                            'images'         => $vehicle->images ?? [],
-                            'primary_image'  => $vehicle->primary_image,
-                            'detail_url'     => $vehicle->detail_url,
-                        ];
-                    @endphp
-                    @endif
+                        @if($quickView)
+                            @php
+                                $vData = [
+                                    'title'          => $vehicle->year.' '.$vehicle->make.' '.$vehicle->model.($vehicle->trim ? ' — '.$vehicle->trim : ''),
+                                    'condition'      => $vehicle->condition,
+                                    'price'          => $vehicle->display_price ? '$'.number_format($vehicle->display_price) : null,
+                                    'vin'            => $vehicle->vin,
+                                    'stock_number'   => $vehicle->stock_number,
+                                    'year'           => $vehicle->year,
+                                    'make'           => $vehicle->make,
+                                    'model'          => $vehicle->model,
+                                    'trim'           => $vehicle->trim,
+                                    'body_style'     => $vehicle->body_style,
+                                    'mileage'        => $vehicle->mileage !== null ? number_format($vehicle->mileage).' mi' : null,
+                                    'engine'         => $ct($vehicle->engine),
+                                    'transmission'   => $ct($vehicle->transmission),
+                                    'drivetrain'     => $vehicle->drivetrain,
+                                    'fuel_type'      => $vehicle->fuel_type,
+                                    'mpg'            => $vehicle->mpg_city ? $vehicle->mpg_city.'/'.$vehicle->mpg_hwy.' MPG' : null,
+                                    'exterior_color' => $vehicle->exterior_color,
+                                    'interior_color' => $vehicle->interior_color,
+                                    'dealer_name'    => $vehicle->dealer_name,
+                                    'dealer_city'    => $vehicle->dealer_city,
+                                    'dealer_state'   => $vehicle->dealer_state,
+                                    'features'       => $vehicle->features ?? [],
+                                    'images'         => $vehicle->images ?? [],
+                                    'primary_image'  => $vehicle->primary_image,
+                                    'detail_url'     => $vehicle->detail_url,
+                                ];
+                            @endphp
+                        @endif
                         <div class="v-card">
 
                             {{-- Image --}}
@@ -572,9 +572,9 @@
                                     {{ strtoupper($vehicle->condition) }}
                                 </span>
                                 @if($quickView)
-                                <button type="button" class="quick-view-overlay" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
-                                    <i class="bi bi-eye-fill"></i> Quick View
-                                </button>
+                                    <button type="button" class="quick-view-overlay" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                        <i class="bi bi-eye-fill"></i> Quick View
+                                    </button>
                                 @endif
                             </div>
 
@@ -636,14 +636,14 @@
                             {{-- Action Buttons --}}
                             <div class="card-actions">
                                 @if($quickView)
-                                <button type="button" class="btn-outline-blue" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
-                                    View Details
-                                </button>
+                                    <button type="button" class="btn-outline-blue" data-vehicle='{{ json_encode($vData, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE) }}'>
+                                        View Details
+                                    </button>
                                 @endif
-{{--                                <a href="{{ $vehicle->detail_url ?? '#' }}"--}}
-{{--                                   @if($vehicle->detail_url) target="_blank" rel="noopener" @endif--}}
-{{--                                   class="btn-outline-blue">View Details</a>--}}
-                                <a href="#" class="btn-gradient">Apply Now</a>
+                                {{--                                <a href="{{ $vehicle->detail_url ?? '#' }}"--}}
+                                {{--                                   @if($vehicle->detail_url) target="_blank" rel="noopener" @endif--}}
+                                {{--                                   class="btn-outline-blue">View Details</a>--}}
+                                <a href="https://juliotucarguy.com/apply-now/" class="btn-gradient">Apply Now</a>
                             </div>
 
                         </div>
@@ -665,76 +665,76 @@
 </div>{{-- /inventory-wrapper --}}
 
 @if($quickView)
-{{-- ══════════════════════════════════════════════
-     IMAGE ZOOM LIGHTBOX
-══════════════════════════════════════════════ --}}
-<div id="qvZoomOverlay">
-    <button id="qvZoomClose" aria-label="Close zoom">&times;</button>
-    <img id="qvZoomImg" src="" alt="">
-</div>
+    {{-- ══════════════════════════════════════════════
+         IMAGE ZOOM LIGHTBOX
+    ══════════════════════════════════════════════ --}}
+    <div id="qvZoomOverlay">
+        <button id="qvZoomClose" aria-label="Close zoom">&times;</button>
+        <img id="qvZoomImg" src="" alt="">
+    </div>
 
-{{-- ══════════════════════════════════════════════
-     QUICK VIEW MODAL
-══════════════════════════════════════════════ --}}
-<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="qvModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content qv-modal-content">
+    {{-- ══════════════════════════════════════════════
+         QUICK VIEW MODAL
+    ══════════════════════════════════════════════ --}}
+    <div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="qvModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content qv-modal-content">
 
-            <div class="modal-header qv-header">
-                <div class="qv-header-left">
-                    <span class="cond-pill qv-cond-pill" id="qvCondPill"></span>
-                    <h5 class="modal-title qv-title" id="qvModalLabel"></h5>
-                    <div class="qv-price-line">
-                        <span class="qv-price" id="qvPrice"></span>
-                        <span class="qv-price-note">Plus taxes, tags &amp; fees</span>
-                    </div>
-                </div>
-                <button type="button" class="btn-close qv-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body qv-body">
-                <div class="qv-layout">
-
-                    {{-- Left: image gallery --}}
-                    <div class="qv-gallery">
-                        <div class="qv-main-img-wrap">
-                            <img id="qvMainImg" src="" alt="" class="qv-main-img">
-                            <button class="qv-gallery-nav qv-prev" id="qvPrev" aria-label="Previous image">
-                                <i class="bi bi-chevron-left"></i>
-                            </button>
-                            <button class="qv-gallery-nav qv-next" id="qvNext" aria-label="Next image">
-                                <i class="bi bi-chevron-right"></i>
-                            </button>
-                            <span class="qv-img-counter" id="qvImgCounter"></span>
+                <div class="modal-header qv-header">
+                    <div class="qv-header-left">
+                        <span class="cond-pill qv-cond-pill" id="qvCondPill"></span>
+                        <h5 class="modal-title qv-title" id="qvModalLabel"></h5>
+                        <div class="qv-price-line">
+                            <span class="qv-price" id="qvPrice"></span>
+                            <span class="qv-price-note">Plus taxes, tags &amp; fees</span>
                         </div>
-                        <div class="qv-thumbs" id="qvThumbs"></div>
                     </div>
+                    <button type="button" class="btn-close qv-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-                    {{-- Right: specs + features --}}
-                    <div class="qv-details">
+                <div class="modal-body qv-body">
+                    <div class="qv-layout">
 
-                        <div class="qv-section-title">Vehicle Details</div>
-                        <div class="qv-specs-grid" id="qvSpecsGrid"></div>
+                        {{-- Left: image gallery --}}
+                        <div class="qv-gallery">
+                            <div class="qv-main-img-wrap">
+                                <img id="qvMainImg" src="" alt="" class="qv-main-img">
+                                <button class="qv-gallery-nav qv-prev" id="qvPrev" aria-label="Previous image">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                                <button class="qv-gallery-nav qv-next" id="qvNext" aria-label="Next image">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                                <span class="qv-img-counter" id="qvImgCounter"></span>
+                            </div>
+                            <div class="qv-thumbs" id="qvThumbs"></div>
+                        </div>
 
-                        <div class="qv-section-title qv-features-title" id="qvFeaturesTitle" style="display:none">Features &amp; Options</div>
-                        <div class="qv-features-wrap" id="qvFeatures"></div>
+                        {{-- Right: specs + features --}}
+                        <div class="qv-details">
 
+                            <div class="qv-section-title">Vehicle Details</div>
+                            <div class="qv-specs-grid" id="qvSpecsGrid"></div>
+
+                            <div class="qv-section-title qv-features-title" id="qvFeaturesTitle" style="display:none">Features &amp; Options</div>
+                            <div class="qv-features-wrap" id="qvFeatures"></div>
+
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="modal-footer qv-footer">
-                <a href="#" class="btn-gradient" id="qvApply" style="padding:10px 22px;font-size:14px;border-radius:6px;">
-                    Apply Now
-                </a>
-{{--                <a href="#" class="btn-outline-blue qv-view-details" id="qvViewDetails" target="_blank" rel="noopener">--}}
-{{--                    View Full Details <i class="bi bi-box-arrow-up-right ms-1" style="font-size:11px;"></i>--}}
-{{--                </a>--}}
-            </div>
+                <div class="modal-footer qv-footer">
+                    <a href="https://juliotucarguy.com/apply-now/" class="btn-gradient" id="qvApply" style="padding:10px 22px;font-size:14px;border-radius:6px;">
+                        Apply Now
+                    </a>
+                    {{--                <a href="#" class="btn-outline-blue qv-view-details" id="qvViewDetails" target="_blank" rel="noopener">--}}
+                    {{--                    View Full Details <i class="bi bi-box-arrow-up-right ms-1" style="font-size:11px;"></i>--}}
+                    {{--                </a>--}}
+                </div>
 
+            </div>
         </div>
     </div>
-</div>
 @endif {{-- $quickView --}}
 
 {{-- ══════════════════════════════════════════════
@@ -743,11 +743,9 @@
 <div class="footer-cta">
     <div class="cta-text">Have a question? Feel free to ask</div>
     <div class="cta-icons">
-        <a href="tel:" title="Call us"><i class="bi bi-telephone-fill"></i></a>
-        <a href="#"   title="Location"><i class="bi bi-geo-alt-fill"></i></a>
-        <a href="#"   title="Email"><i class="bi bi-envelope-fill"></i></a>
-        <a href="#"   title="Facebook"><i class="bi bi-facebook"></i></a>
-        <a href="#"   title="Instagram"><i class="bi bi-instagram"></i></a>
+        <a href="tel:214-864-0384" title="Call us"><i class="bi bi-telephone-fill"></i></a>
+        <a href="https://www.facebook.com/julio.tu.carguy"   title="Facebook"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.instagram.com/juliotucarguy"   title="Instagram"><i class="bi bi-instagram"></i></a>
     </div>
 </div>
 
@@ -769,9 +767,6 @@
                 <h6>Vehicles</h6>
                 <ul>
                     <li><a href="{{ route('inventory.index', ['body_style' => 'SUV']) }}">SUVs</a></li>
-                    <li><a href="{{ route('inventory.index', ['body_style' => 'Truck']) }}">Trucks</a></li>
-                    <li><a href="{{ route('inventory.index', ['body_style' => 'Crossover']) }}">Crossovers</a></li>
-                    <li><a href="{{ route('inventory.index', ['fuel_type' => 'Hybrid']) }}">Hybrids</a></li>
                     <li><a href="{{ route('inventory.index', ['fuel_type' => 'Electric']) }}">Electrified Vehicles</a></li>
                 </ul>
             </div>
@@ -779,22 +774,18 @@
             <div class="col-6 col-md-3 col-lg-2">
                 <h6>Helpful Links</h6>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About Us</a></li>
+                    <li><a href="https://juliotucarguy.com/">Home</a></li>
+                    <li><a href=" https://juliotucarguy.com/about-us/">About Us</a></li>
                     <li><a href="{{ route('inventory.index') }}">Inventory</a></li>
-                    <li><a href="#">Financial Services</a></li>
-                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="https://juliotucarguy.com/financial-services/">Financial Services</a></li>
+                    <li><a href="https://juliotucarguy.com/contact-us/">Contact Us</a></li>
                 </ul>
             </div>
 
             <div class="col-6 col-md-3 col-lg-2">
                 <h6>Help</h6>
                 <ul>
-                    <li><a href="#">How To Buy A Car?</a></li>
-                    <li><a href="#">FAQ's</a></li>
-                    <li><a href="#">Privacy Policy</a></li>
-                    <li><a href="#">Terms &amp; Conditions</a></li>
-                    <li><a href="#">Legal Disclaimer</a></li>
+                    <li><a href="https://juliotucarguy.com/faqs/">FAQ's</a></li>
                 </ul>
             </div>
 
@@ -960,10 +951,10 @@
             var grid = getEl('qvSpecsGrid');
             if (grid) grid.innerHTML = specs.filter(function (s) { return s.val; }).map(function (s) {
                 return '<div class="qv-spec-item">'
-                     + '<span class="qv-spec-icon"><i class="bi ' + s.icon + '"></i></span>'
-                     + '<div><span class="qv-spec-label">' + s.label + '</span>'
-                     + '<span class="qv-spec-val">' + String(s.val) + '</span></div>'
-                     + '</div>';
+                    + '<span class="qv-spec-icon"><i class="bi ' + s.icon + '"></i></span>'
+                    + '<div><span class="qv-spec-label">' + s.label + '</span>'
+                    + '<span class="qv-spec-val">' + String(s.val) + '</span></div>'
+                    + '</div>';
             }).join('');
 
             /* Features */
